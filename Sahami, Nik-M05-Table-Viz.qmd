@@ -1,0 +1,126 @@
+---
+title: "M05-Visualizing Data with Tables for MSDM CEP"
+author: "Nik Sahami"
+date: '`r format(Sys.time())`'
+format: 
+  html: 
+    toc: true
+    number-sections: true
+    code-link: true
+    embed-resources: true
+editor: visual
+execute: 
+  freeze: auto
+---
+
+# Essay Prompts
+
+## Summarize what you learned from the videos you watched
+
+Basically, the videos went over what the `gt` package is and how it can be used to create more readable tables out of big data sets. The last couple videos discuss the `gtExtras` package, and how it can be used to make the tables look nicer. Here are some of the `gt` functions that they discussed in the videos and on the official website:
+
+|                     |                                           |
+|---------------------|-------------------------------------------|
+| `gt()`              | Converts data into a gt table             |
+| `tab_header()`      | Adds title and subtitle                   |
+| `tab_stubhead()`    | Gives the stub/row-label column a heading |
+| `cols_label()`      | Renames columns to readable labels        |
+| `tab_spanner()`     | Creates a heading over multiple columns   |
+| `fmt_number()`      | Formats numbers and decimals              |
+| `fmt_currency()`    | Formats monetary values                   |
+| `fmt_percent()`     | Formats percentages                       |
+| `tab_footnote()`    | Adds footnotes                            |
+| `tab_source_note()` | Adds a source note                        |
+| `data_color()`      | Colors cells by their numeric values      |
+| `tab_style()`       | Gives more precise styling control        |
+| `tab_options()`     | Changes general table appearance          |
+
+These functions all serve to transform raw R outputs into something more presentable and engaging. These are all included in the base `gt` package, but `gtExtras` includes a bunch more functions. `gtExtras` is a package that builds upon the base of `gt`, so it can enhance what has already been made. For example, the `gt_plt_bar()` function can turn a numeric column into small horizontal bar charts. The bars share an axis, so you can quickly compare values while still keeping the actual data in a structured table. There is also `gt_plt_sparkline()` which creates tiny line charts inside cells. This can be helpful for displaying data over time, like retention rate or enrollment over several semesters. Similarly, `gt_plt_dist()` can show tiny histograms, density plots, boxplots, or strip plots representing the distribution of observations within a group.
+
+In addition to showing the data, `gtExtras` is also especially useful for making the table look nicer. It has the function `gt_color_rows()` which can make the data easily visualizable with color scales based on the values, but it also has a number of premade themes, such as:
+
+- `gt_theme_538()`
+
+- `gt_theme_espn()`
+
+- `gt_theme_nytimes()`
+
+- `gt_theme_guardian()`
+
+- `gt_theme_dark()`
+
+These give the table a nice style and formatting without having to do it manually.
+
+## What did you like about the ***gt*** and ***gtExtra*** packages demonstrated in the videos?
+
+I really like how much control you have over the presentation of the table, and the way `gt` uses the same basic pipe workflow makes it easier for me to learn. I like thinking logically step-by-step, and i think this allows me to work in that way while still creating something presentable. You can start with a summarized dataframe and progressively add titles, readable labels, numerical formatting, footnotes, and styling.
+
+For `gtExtras`, I really like how it is able to combine numerical data with modes of visualization within the same table. The freedom it gives in terms of customization and showing patterns through charts and graphs is really cool, and I think it would be very helpful for my CEP.
+
+## How do tables complement charts for data visualization?
+
+Tables complement charts for data visualization because they provide the actual values and data instead of just a representation of the overall patterns or relationships. Although they are both extremely helpful, the inclusion of a table lets the viewer compare real numbers and exact values instead of trying to estimate them from a bar chart or some other other graph.
+
+Charts can show general trends or relationships, and can be especially helpful for comparisons, but they aren't the best at providing precise information in the way that a table can.
+
+## Under what circumstances would you prefer to use tables rather than charts to visualize data?
+
+I would prefer to use a table over a chart in a few different situations:
+
+1.  if the audience needs exact values instead of just the general pattern
+
+2.  when comparing a relatively small number of categories and the relationship can be clearly visible through the numbers alone
+
+3.  when multiple measurements need to appear together, like sample size, mean, standard deviation, and percentage
+
+A chart is usually better when you have lots of observations and you are trying to identify patterns or relationships, and tables are better for actual information retrieval. `gtExtras` blurs the lines between these by allowing you to include little charts and visualizations within a table.
+
+# Applying the skills
+
+::: callout-tip
+## Note:
+
+I do not have the data for my CEP yet, so I will be using the `pizzaplace` data from the `gt` package.
+:::
+
+```{r}
+#| echo: false
+#| warning: false
+
+library(tidyverse)
+library(gt)
+library(gtExtras)
+
+pizza_summary <- pizzaplace |>
+  group_by(type) |>
+  summarise(pizzas_sold = n(),
+    total_revenue = sum(price),
+    avg_price = mean(price)) |>
+  mutate(sales_pct = pizzas_sold / sum(pizzas_sold),
+         sales_bar = pizzas_sold)
+
+pizza_summary |>
+  gt(rowname_col = "type") |>
+  tab_header(title = "Pizza Sales Performance by Category",
+    subtitle = "Comparison of sales volume, pricing, and revenue") |>
+  tab_stubhead(label = "Pizza Category") |>
+  cols_label(pizzas_sold = "Pizzas Sold",
+    total_revenue = "Total Revenue",
+    avg_price = "Average Price",
+    sales_pct = "Share of Sales",
+    sales_bar = "Sales Comparison") |>
+  tab_spanner(label = "Sales Performance",
+    columns = c(pizzas_sold, total_revenue, sales_pct, sales_bar)) |>
+  fmt_number(columns = pizzas_sold,
+    decimals = 0) |>
+  fmt_currency(columns = c(total_revenue, avg_price),
+    decimals = 2) |>
+  fmt_percent(columns = sales_pct,
+    decimals = 2) |>
+  gt_plt_bar(column = sales_bar) |>
+  data_color(columns = total_revenue) |> 
+  tab_source_note(source_note = "Source: pizzaplace dataset from the gt package.") |> 
+  tab_footnote(footnote = "Share of Sales is each category's percentage of all pizzas sold.",
+    locations = cells_column_labels(columns = sales_pct)) |> 
+  gt_theme_espn()
+```
