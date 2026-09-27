@@ -125,6 +125,8 @@ pizza_summary |>
   gt_theme_espn()
 ```
 
+This is obviously not the exact table I will include in my CEP report, but something like this would be really useful for visualizing enrollment and retention trends over time. My AO specifically deals with retention, so I could use these features to compare retention rates, especially between multiple segments of students. I will be focusing on transfers vs first-time freshmen, so I think this could be especially helpful to compare those groups and then the factors that contribute to each one's rates.
+
 # Appendix
 
 ## Link to GitHub Repo
