@@ -124,3 +124,13 @@ pizza_summary |>
     locations = cells_column_labels(columns = sales_pct)) |> 
   gt_theme_espn()
 ```
+
+# Appendix
+
+## Link to GitHub Repo
+
+<https://github.com/itsnik1/M05-Visualizing-Data-with-Tables-for-MSDM-CEP>
+
+## Link to Published Page
+
+<https://itsnik1.github.io/M05-Visualizing-Data-with-Tables-for-MSDM-CEP/>
